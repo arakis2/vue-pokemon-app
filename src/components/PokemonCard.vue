@@ -7,17 +7,10 @@ export default {
         pokemon: {
             type: Object,
             required: true
-        },
-        borderColor: {
-            type: String,
-            default: '#009688',
-            required: false
-        },
+        }
     },
     data() {
         return {
-            defaultColor: '#f5f5f5',
-            color: '#f5f5f5',
             formatDate: formatDate
         }
     },
