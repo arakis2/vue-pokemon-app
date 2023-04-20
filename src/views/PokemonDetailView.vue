@@ -1,37 +1,27 @@
 <script lang="ts">
-
-    import PokemonTypes from '@/components/PokemonTypes.vue';
-    import Pokemon from '../models/pokemon'
-    import POKEMONS from '@/models/mock-pokemon';
-    import formatDate from '../tools/format-date';
-    import PokemonLoader from '../components/PokemonLoader.vue'
-
-    export default {
-    props: {
-        Pokemons: Array<Pokemon>,
-        Pokemon: {
-            type: Pokemon,
-            required: false
-        }
-    },
+export default {
     data() {
         return {
-            pokemons: this.Pokemons,
-            pokemon: this.Pokemon,
+            pokemon: undefined as Pokemon | undefined | null,
             formatDate: formatDate
         };
     },
     mounted() {
-        this.pokemons = POKEMONS;
-        this.pokemon = this.pokemons.find(x => x.id === +this.$route.params.id);
+        PokemonService.getPokemon(+this.$route.params.id).then(pokemon => this.pokemon = pokemon)
     },
-    components: { 
+    components: {
         PokemonTypes,
         PokemonLoader
     }
 }
 </script>
-
+<script setup lang="ts">
+import PokemonTypes from '@/components/PokemonTypes.vue';
+import formatDate from '@/tools/format-date';
+import PokemonLoader from '@/components/PokemonLoader.vue'
+import PokemonService from '@/services/pokemon-service';
+import type Pokemon from '@/models/pokemon';
+</script>
 <template>
     <div>
         <div v-if="pokemon" className="row">
@@ -66,7 +56,9 @@
                                     </tr>
                                     <tr>
                                         <th>Types</th>
-                                        <td><PokemonTypes :Types="pokemon.types" :key="pokemon.id" /></td>
+                                        <td>
+                                            <PokemonTypes :Types="pokemon.types" :key="pokemon.id" />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Date de création</th>

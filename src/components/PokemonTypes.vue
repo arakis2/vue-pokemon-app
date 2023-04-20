@@ -1,5 +1,5 @@
 <script lang="ts">
-    import formatType from '../tools/format-type'
+    import formatType from '@/tools/format-type'
 
     export default {
         props: {

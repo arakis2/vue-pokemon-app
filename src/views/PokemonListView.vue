@@ -1,26 +1,30 @@
 <script lang="ts">
-import POKEMONS from '@/models/mock-pokemon';
-import PokemonCard from '../components/PokemonCard.vue'
-import PokemonLoader from '../components/PokemonLoader.vue'
-
 export default {
     data() {
         return {
-            pokemons: POKEMONS
+            pokemons: [] as Pokemon[]
         }
     },
     components: {
         PokemonCard,
         PokemonLoader
+    },
+    mounted() {
+        PokemonService.getPokemons().then(pokemons => this.pokemons = pokemons)
     }
 
 }
-
+</script>
+<script setup lang="ts">
+import PokemonCard from '../components/PokemonCard.vue'
+import PokemonLoader from '../components/PokemonLoader.vue'
+import PokemonService from '@/services/pokemon-service';
+import type Pokemon from '@/models/pokemon';
 </script>
 
 <template>
     <div>
-        <div v-if="pokemons && pokemons.length > 0"> 
+        <div v-if="pokemons && pokemons.length > 0">
             <p className='center'>
                 Il y a <b>{{ pokemons.length }}</b> pokémon{{ pokemons.length > 1 ? 's' : '' }} dans le pokédex
             </p>
