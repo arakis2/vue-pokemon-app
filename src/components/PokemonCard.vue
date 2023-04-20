@@ -29,7 +29,7 @@ import type Pokemon from '@/models/pokemon';
 </script>
 
 <template>
-    <div className="col s6 m4" @click="() => goToPokemon(pokemon.id)">
+    <div className="col s10 m6 l4" @click="() => goToPokemon(pokemon.id)">
         <div className="card hoverable">
             <div className="card horizontal">
                 <div className="card-image">
