@@ -1,11 +1,8 @@
 <script lang="ts">
-
-import formatDate from '../tools/format-date';
-import PokemonTypes from '../components/PokemonTypes.vue'
 export default {
     props: {
         pokemon: {
-            type: Object,
+            type: Object as PropType<Pokemon>,
             required: true
         }
     },
@@ -23,6 +20,12 @@ export default {
         PokemonTypes
     }
 }
+</script>
+<script setup lang="ts">
+import formatDate from '@/tools/format-date';
+import PokemonTypes from '@/components/PokemonTypes.vue'
+import type { PropType } from 'vue';
+import type Pokemon from '@/models/pokemon';
 </script>
 
 <template>
