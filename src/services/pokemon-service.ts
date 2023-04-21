@@ -39,4 +39,11 @@ export default class PokemonService {
             resolve(pokemon);
           });
     }
+
+    static  searchPokemon(term: string): Promise<Pokemon[]> {
+        return new Promise(resolve => {
+            const results = this.pokemons.filter(pokemon => pokemon.name.toUpperCase().includes(term.toUpperCase()));
+            resolve(results);
+        })
+    }
 }

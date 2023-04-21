@@ -2,15 +2,31 @@
 export default {
     data() {
         return {
-            pokemons: [] as Pokemon[]
+            pokemons: [] as Pokemon[],
+            searchPokemons: [] as Pokemon[]
         }
     },
     components: {
         PokemonCard,
-        PokemonLoader
+        PokemonLoader,
+        PokemonSearch
     },
     mounted() {
-        PokemonService.getPokemons().then(pokemons => this.pokemons = pokemons)
+        PokemonService.getPokemons().then(pokemons => {
+            this.pokemons = pokemons;
+            this.searchPokemons = pokemons;
+        });
+    },
+    methods: {
+        setSearchList(pokemons: Pokemon[]): void {
+            this.searchPokemons = pokemons.length > 0 ? pokemons : this.pokemons;
+        }
+    },
+    computed: {
+        searchList() {
+            return this.searchPokemons;
+        }
+        
     }
 
 }
@@ -20,6 +36,7 @@ import PokemonCard from '../components/PokemonCard.vue'
 import PokemonLoader from '../components/PokemonLoader.vue'
 import PokemonService from '@/services/pokemon-service';
 import type Pokemon from '@/models/pokemon';
+import PokemonSearch from '@/components/PokemonSearch.vue';
 </script>
 
 <template>
@@ -30,7 +47,8 @@ import type Pokemon from '@/models/pokemon';
             </p>
             <div className="container">
                 <div className="row">
-                    <PokemonCard v-for="pokemon in pokemons" :key="pokemon.id" :pokemon="pokemon" />
+                    <PokemonSearch @result="(list) => setSearchList(list)" :Pokemons="pokemons"/>
+                    <PokemonCard v-for="pokemon in searchList" :key="pokemon.id" :pokemon="pokemon" />
                 </div>
             </div>
             <div className="btn-floating btn-large waves-effect waves-light red z-depth-3"
