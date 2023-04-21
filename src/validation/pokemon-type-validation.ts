@@ -1,4 +1,4 @@
-import type PokemonForm from '@/tools/form-form-property'
+import type PokemonForm from '@/tools/pokemon-form-property'
 
 const isTypesValid = (form: PokemonForm, type: string): boolean => {
     // Cas n°1: Le pokémon a un seul type, qui correspond au type passé en paramètre.

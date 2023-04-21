@@ -1,6 +1,6 @@
-import type PokemonForm from "../tools/form-form-property";
+import type PokemonForm from "../tools/pokemon-form-property";
 
-export default class ValidationForm{
+export default class PokemonValidation{
     form: PokemonForm;
     isValid: boolean | undefined
 

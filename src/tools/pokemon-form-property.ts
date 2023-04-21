@@ -1,4 +1,4 @@
-import type PokemonField from "./form-field-property";
+import type PokemonField from "./pokemon-field-property";
 
 type PokemonForm = {
     picture: PokemonField,

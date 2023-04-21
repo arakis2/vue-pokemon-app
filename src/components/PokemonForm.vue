@@ -100,11 +100,11 @@ export default {
 <script setup lang="ts">
 import type { PropType } from 'vue';
 import type Pokemon from '@/models/pokemon';
-import type Pokemonform from '@/tools/form-form-property';
-import type PokemonField from '@/tools/form-field-property';
+import type Pokemonform from '@/tools/pokemon-form-property';
+import type PokemonField from '@/tools/pokemon-field-property';
 import validateForm from '@/validation/pokemon-form-validation'
 import PokemonService from '@/services/pokemon-service';
-import type PokemonForm from '@/tools/form-form-property';
+import type PokemonForm from '@/tools/pokemon-form-property';
 import Types from '@/tools/pokemon-types';
 import isTypesValid from '@/validation/pokemon-type-validation'
 import formatType from '@/tools/format-type'

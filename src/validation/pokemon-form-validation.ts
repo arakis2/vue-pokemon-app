@@ -1,6 +1,6 @@
-import type Pokemonform from '../tools/form-form-property'
-import type PokemonField from '../tools/form-field-property';
-import ValidationForm from './validation-form';
+import type Pokemonform from '../tools/pokemon-form-property'
+import type PokemonField from '../tools/pokemon-field-property';
+import ValidationForm from './pokemon-validation';
 
 const validateForm = (form: Pokemonform, isEditForm: boolean): ValidationForm => {    
 

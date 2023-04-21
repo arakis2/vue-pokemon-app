@@ -16,6 +16,7 @@ export default {
             this.pokemons = pokemons;
             this.searchPokemons = pokemons;
         });
+        
     },
     methods: {
         setSearchList(pokemons: Pokemon[]): void {
