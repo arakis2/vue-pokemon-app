@@ -1,0 +1,48 @@
+{
+    "types": [
+        {
+            "id": 1,
+            "name": "Plante"
+        },
+        {
+            "id": 2,
+            "name": "Feu"
+        },
+        {
+            "id": 3,
+            "name": "Eau"
+        },
+        {
+            "id": 4,
+            "name": "Insecte"
+        },
+        {
+            "id": 5,
+            "name": "Normal"
+        },
+        {
+            "id": 6,
+            "name": "Electrik"      
+        },
+        {
+            "id": 7,
+            "name": "Poison"
+        },
+        {
+            "id": 8,
+            "name": "Fée"
+        },
+        {
+            "id": 9,
+            "name": "Vol"
+        },
+        {
+            "id": 10,
+            "name": "Combat"
+        },
+        {
+            "id": 11,
+            "name": "Psy"
+        }
+    ]
+}

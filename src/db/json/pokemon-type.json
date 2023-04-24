@@ -1,0 +1,79 @@
+{
+    "pokemontypes": [
+        {
+            "id": 1,
+            "pokemonid": 1,
+            "typeid": 1
+        },
+        {
+            "id": 2,
+            "pokemonid": 1,
+            "typeid": 7
+        },
+        {
+            "id": 3,
+            "pokemonid": 2,
+            "typeid": 2
+        },
+        {
+            "id": 4,
+            "pokemonid": 3,
+            "typeid": 3
+        },
+        {
+            "id": 5,
+            "pokemonid": 4,
+            "typeid": 4
+        },
+        {
+            "id": 6,
+            "pokemonid": 4,
+            "typeid": 7
+        },
+        {
+            "id": 7,
+            "pokemonid": 5,
+            "typeid": 5
+        },
+        {
+            "id": 8,
+            "pokemonid": 5,
+            "typeid": 9
+        },
+        {
+            "id": 9,
+            "pokemonid": 6,
+            "typeid": 5
+        },
+        {
+            "id": 10,
+            "pokemonid": 7,
+            "typeid": 5
+        },
+        {
+            "id": 11,
+            "pokemonid": 7,
+            "typeid": 9
+        },
+        {
+            "id": 12,
+            "pokemonid": 8,
+            "typeid": 7
+        },
+        {
+            "id": 13,
+            "pokemonid": 10,
+            "typeid": 5
+        },
+        {
+            "id": 14,
+            "pokemonid": 11,
+            "typeid": 8
+        },
+        {
+            "id": 15,
+            "pokemonid": 12,
+            "typeid": 2
+        }
+    ]
+}
