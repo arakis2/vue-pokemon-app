@@ -1,0 +1,6 @@
+{
+    "source": {
+        "local": false,
+        "baseurl": "http://localhost:3001"
+    }
+}

@@ -14,13 +14,9 @@ export default class PokemonService {
     static getPokemons(): Promise<Pokemon[]> {
         return new Promise(resolve => {               
                 PokemonDbService.getPokemons().then(pokemonsDb => {
-                    const pokemons: Pokemon[] = [];
-                    pokemonsDb.forEach(pokemonDb => {
-                        this.loadPokemon(pokemonDb).then(pokemon => {
-                            pokemons.push(pokemon);
-                        })
-                    });
-                    resolve(pokemons);
+                    this.loadPokemons(pokemonsDb).then(pokemonList => {
+                        resolve(pokemonList);
+                    });                                      
                 });
         })      
     }
@@ -39,50 +35,56 @@ export default class PokemonService {
     static async updatePokemon(pokemon: Pokemon): Promise<Pokemon> {
         return await new Promise(resolve => {
             const pokemonDb = PokemonConverter.toPokemonDb(pokemon);
-
-            PokemonDbService.updatePokemon(pokemonDb);
-
-            PokemonTypeDbService.getPokemonTypesByPokemonId(pokemon.id).then(dbtypes => {
-                const pokemonTypes = dbtypes.map(l => l.typeId).filter(n => n !== undefined && n > 0);
-                this.getTypesDbByTypeName(pokemon.types).then(typesDb => {
-                        const types = typesDb.map(t => t.id);
-
-                        if (types.toString() !== pokemonTypes.toString()){
-
-                            if (pokemonTypes.length > types.length) {
-                                //supression
-                                pokemonTypes.forEach(i => {
-                                    if (!types.includes(i)) {
-                                        const item = dbtypes.find(item => item.typeId === i);
-                                        if (item){
-                                            PokemonTypeDbService.deletePokemonType(item);
-                                        }
-                                        
+            try {
+                PokemonDbService.updatePokemon(pokemonDb).then(() => {
+                    PokemonTypeDbService.getPokemonTypesByPokemonId(pokemon.id).then(dbtypes => {
+                        const pokemonTypes = dbtypes.map(l => l.typeid).filter(n => n !== undefined && n > 0);
+                        this.getTypesDbByTypeName(pokemon.types).then(typesDb => {
+                                const types = typesDb.map(t => t.id);
+                                    console.log(types.toString());
+                                    console.log(pokemonTypes.toString());
+                                if (types.toString() !== pokemonTypes.toString()){
+        
+                                    if (pokemonTypes.length > types.length) {
+                                        //supression
+                                        pokemonTypes.forEach(i => {
+                                            if (!types.includes(i)) {
+                                                const item = dbtypes.find(item => item.typeid === i);
+                                                if (item){
+                                                    PokemonTypeDbService.deletePokemonType(item);
+                                                }
+                                                
+                                            }
+                                        });
+                                    } else {
+                                        console.log('dans ajout')
+                                        // Ajout
+                                        types.forEach(i => {
+                                            if (i  && i > 0 && !pokemonTypes.includes(i)) {
+                                                const type = new PokemontypeDb(undefined, pokemon.id, i);
+                                                PokemonTypeDbService.addPokemonType(type);
+                                            }
+                                        })
                                     }
-                                });
-                            } else {
-                                console.log('dans ajout')
-                                // Ajout
-                                types.forEach(i => {
-                                    if (i  && i > 0 && !pokemonTypes.includes(i)) {
-                                        const type = new PokemontypeDb(undefined, pokemon.id, i);
-                                        PokemonTypeDbService.addPokemonType(type);
-                                    }
-                                })
+                                }
                             }
-                        }
-                    }
-                    
-                )
-            })
-
-            PokemonDbService.getPokemonById(pokemon.id).then(pokemondb => {
-                if(pokemondb) {
-                    const pokemon = this.loadPokemon(pokemondb);
-                    resolve(pokemon);
-                }                
-            })
-        }); 
+                            
+                        )
+                    })
+        
+                    PokemonDbService.getPokemonById(pokemon.id).then(pokemondb => {
+                        if(pokemondb) {
+                            const pokemon = this.loadPokemon(pokemondb);
+                            resolve(pokemon);
+                        }                
+                    })
+                }); 
+            } catch (error) {
+                console.log(error);
+            }
+            
+        });
+   
     }
 
     static deletePokemon(pokemon: Pokemon): Promise<{}> {
@@ -132,21 +134,42 @@ export default class PokemonService {
         })
     }
 
+    private static loadPokemons(pokemonsDb: PokemonDb[]): Promise<Pokemon[]> {
+        return new Promise(resolve => {
+            const pokemons: Pokemon[] = [];
+            pokemonsDb.forEach(pokemonDb => {
+                this.loadPokemon(pokemonDb).then(pokemon => {
+                    pokemons.push(pokemon);
+
+                    if(pokemons.length === pokemonsDb.length){
+                        resolve(pokemons);
+                    }
+                })
+                
+            });
+            
+        });
+    }
+
     private static loadPokemon(pokemonDb: PokemonDb): Promise<Pokemon> {
        return new Promise(resolve => {
         
-        PokemonTypeDbService.getPokemonTypesByPokemonId(pokemonDb.id ?? 0).then(typesDb => { 
+        PokemonTypeDbService.getPokemonTypesByPokemonId(pokemonDb.id ?? 0).then(typesDb => {             
             const pokemon = PokemonConverter.toPokemon(pokemonDb);         
             pokemon.types = [];
-            typesDb.forEach(type => {
-                TypeDbService.getTypeById(type.typeId ?? 0).then(typename => {
+            typesDb.forEach(type => {           
+                TypeDbService.getTypeById(type.typeid ?? 0).then(typename => {
                     if(typename){                                   
                         pokemon.types.push(typename.name);
                         pokemon.types = pokemon.types.sort();
-                    }                                
+                    }
+                    
+                    if(pokemon.types.length === typesDb.length){
+                        resolve(pokemon);
+                    }
                 })
             })
-           resolve(pokemon);
+           
         });
        })
     }
@@ -163,7 +186,5 @@ export default class PokemonService {
             })
             resolve(typesDb);
         })
-    }
-
-    
+    } 
 }

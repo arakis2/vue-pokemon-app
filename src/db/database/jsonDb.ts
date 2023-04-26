@@ -1,9 +1,7 @@
 import PokemonDb from "../models/pokemonDb";
-import pokemons from '@/db/json/pokemon.json'
+import {pokemons, types, pokemontypes} from '@/db/json/localdatabase.json'
 import TypeDb from "../models/typeDb";
-import types from '@/db/json/type.json'
 import PokemontypeDb from "../models/pokemonTypeDb";
-import pokemonTypes from '@/db/json/pokemon-type.json'
 
 enum Table {
     Pokemon,
@@ -117,11 +115,11 @@ export default class JsonDb {
     }
 
     static getTypeById(id: number): TypeDb|undefined{
-        return this.getTYPES().find(pokemon => pokemon.id === id);
+        return this.getTYPES().find(type => type.id === id);
     }
 
     static getTypeByName(name: string): TypeDb|undefined{
-        return this.getTYPES().find(pokemon => pokemon.name.toUpperCase().trim() === name.toUpperCase().trim());
+        return this.getTYPES().find(type => type.name.toUpperCase().trim() === name.toUpperCase().trim());
     }
 
     static isTypeNameExists(name: string): boolean {
@@ -154,7 +152,6 @@ export default class JsonDb {
                 this.TYPES?.push(new TypeDb(type.id, type.name ))
             });
         }
-
         return this.TYPES ?? [];
     }
 
@@ -172,7 +169,7 @@ export default class JsonDb {
     }
 
     static getPokemonTypesByPokemonId(id: number): PokemontypeDb[] {
-        return this.getPOKEMONTYPES().filter(pokemontype => pokemontype.pokemonId === id);
+        return this.getPOKEMONTYPES().filter(pokemontype => pokemontype.pokemonid === id);
     }
 
     static createPokemonType(pokemonType: PokemontypeDb): PokemontypeDb|undefined {
@@ -185,7 +182,7 @@ export default class JsonDb {
     }
 
     static hasPokemonType(pokemonId: number, typeId: number): boolean {
-        return this.getPokemonTypes().some(pokemontype => pokemontype.pokemonId === pokemonId && pokemontype.typeId === typeId)
+        return this.getPokemonTypes().some(pokemontype => pokemontype.pokemonid === pokemonId && pokemontype.typeid === typeId)
     }
 
     static updatePokemonType(pokemonType: PokemontypeDb): void {
@@ -202,7 +199,7 @@ export default class JsonDb {
     private static getPOKEMONTYPES(): PokemontypeDb[] {
         if(!this.POKEMONTYPES || this.POKEMONTYPES.length < 1) {
             this.POKEMONTYPES = [];
-            pokemonTypes.forEach(pokemonType => {
+            pokemontypes.forEach(pokemonType => {
                 this.POKEMONTYPES?.push(new PokemontypeDb(pokemonType.id, pokemonType.pokemonid, pokemonType.typeid))
             });
         }

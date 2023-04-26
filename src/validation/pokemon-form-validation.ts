@@ -7,7 +7,7 @@ const validateForm = (form: Pokemonform, isEditForm: boolean): Promise<Validatio
     return new Promise(resolve => {
           PokemonDbService.isPokemonNameExists(form.name.value).then(isExists => {
             // Validator name
-            if(isExists) {
+            if(isExists && !isEditForm) {
               const errorMsg: string = 'Le nom du pokémon existe déjà.';
               const newField: PokemonField = { value: form.name.value, error: errorMsg, isValid: false };
               form = { ...form, ...{ name: newField } };
