@@ -2,7 +2,7 @@
     {
       "id": 1,
       "name": "Bulbizarre",
-      "hp": "250",
+      "hp": 250,
       "cp": 5,
       "picture": "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/001.png"
     },
@@ -55,6 +55,13 @@
       "cp": 4,
       "picture": "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/023.png"
     },
+    {
+      "id": 9,
+      "name": "Pikachu",
+      "hp": 21,
+      "cp": 7,
+      "picture": "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/025.png"
+     },
     {
       "id": 10,
       "name": "Sabelette",

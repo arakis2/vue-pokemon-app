@@ -4,7 +4,8 @@ export default class TypeDb {
     name: string;
     created?: Date;
 
-    constructor(name: string = '', created:Date = new Date){
+    constructor(id: number|undefined = undefined, name: string = '', created:Date = new Date){
+        this.id = id;
         this.name = name;
         this.created = created;
     }

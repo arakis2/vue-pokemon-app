@@ -1,5 +1,4 @@
-{
-    "pokemontypes": [
+[
         {
             "id": 1,
             "pokemonid": 1,
@@ -74,6 +73,10 @@
             "id": 15,
             "pokemonid": 12,
             "typeid": 2
+        },
+        {
+            "id": 16,
+            "pokemonid": 9,
+            "typeid": 6
         }
     ]
-}

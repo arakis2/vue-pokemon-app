@@ -11,13 +11,12 @@ export default {
         PokemonLoader,
         PokemonSearch
     },
-    mounted() {
+   mounted() { 
         PokemonService.getPokemons().then(pokemons => {
-            this.pokemons = pokemons;
+            this.pokemons = pokemons
             this.searchPokemons = pokemons;
-        });
-        
-    },
+        });     
+  },
     methods: {
         setSearchList(pokemons: Pokemon[]): void {
             this.searchPokemons = pokemons.length > 0 ? pokemons : this.pokemons;

@@ -55,7 +55,6 @@ export default class JsonDb {
 
     // Pokémons
     static getPokemons(): PokemonDb[] {
-        console.log(this.getPOKEMONS());
         return this.getPOKEMONS();
     }
 
@@ -87,11 +86,21 @@ export default class JsonDb {
         return this.getPokemonById(pokemon.id);
     }
 
+    static searchPokemonByName(term: string): PokemonDb[] {
+        return this.getPOKEMONS().filter(p => p.name.toUpperCase().includes(term))
+    }
+
     private static getPOKEMONS(): PokemonDb[]{
         if (!this.POKEMONS || this.POKEMONS.length < 1) {
+            this.POKEMONS = [];
             pokemons.forEach(item => {
-                console.log(item);
-                this.POKEMONS?.push( Object.assign(new PokemonDb, item))
+                this.POKEMONS?.push( new PokemonDb(
+                    item.id,
+                    item.hp, 
+                    item.cp,
+                    item.name,
+                    item.picture
+                ))
             });
         }       
        
@@ -139,11 +148,11 @@ export default class JsonDb {
     }
 
     private static getTYPES(): TypeDb[]{
-        if(!this.TYPES) {
-
-            if (Array.isArray(types)){
-                this.TYPES = Object.assign(new TypeDb, types);
-            }
+        if(!this.TYPES || this.TYPES.length < 1) {
+            this.TYPES = [];
+            types.forEach(type => {
+                this.TYPES?.push(new TypeDb(type.id, type.name ))
+            });
         }
 
         return this.TYPES ?? [];
@@ -191,11 +200,11 @@ export default class JsonDb {
     }
 
     private static getPOKEMONTYPES(): PokemontypeDb[] {
-        if(this.POKEMONTYPES) {
-
-            if (Array.isArray(pokemonTypes)){
-                this.POKEMONTYPES = Object.assign(new PokemontypeDb, pokemonTypes);
-            }
+        if(!this.POKEMONTYPES || this.POKEMONTYPES.length < 1) {
+            this.POKEMONTYPES = [];
+            pokemonTypes.forEach(pokemonType => {
+                this.POKEMONTYPES?.push(new PokemontypeDb(pokemonType.id, pokemonType.pokemonid, pokemonType.typeid))
+            });
         }
 
         return this.POKEMONTYPES ?? [];

@@ -60,18 +60,20 @@ export default {
         handleSubmit(e: any) {            
             e.preventDefault();
             let newForm: Pokemonform = this.form as Pokemonform;
-            const validform = validateForm(newForm, true);
-            this.setform(validform.form);
+            validateForm(newForm, true).then(validForm => {
+                this.setform(validForm.form);
 
-            if (validform.isValid) {
-                this.pokemon.picture = this.form?.picture.value;
-                this.pokemon.name = this.form?.name.value;
-                this.pokemon.hp = this.form?.hp.value;
-                this.pokemon.cp = this.form?.cp.value;
-                this.pokemon.types = this.form?.types.value;
+                if (validForm.isValid) {
+                    this.pokemon.picture = this.form?.picture.value;
+                    this.pokemon.name = this.form?.name.value;
+                    this.pokemon.hp = this.form?.hp.value;
+                    this.pokemon.cp = this.form?.cp.value;
+                    this.pokemon.types = this.form?.types.value;
 
-                this.isEditForm ? this.updatePokemon() : this.addPokemon();
-            }
+                    this.isEditForm ? this.updatePokemon() : this.addPokemon();
+                }
+            });
+            
 
         },
         setform(form: Pokemonform) {

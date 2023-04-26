@@ -21,6 +21,12 @@ export default class PokemonDbService {
         });
     }
 
+    static createPokemon(pokemon: PokemonDb): Promise<PokemonDb|undefined> {
+        return new Promise(resolve => {
+            resolve(JsonDb.createPokemon(pokemon));
+        });
+    }
+
     static updatePokemon(pokemon:PokemonDb): Promise<void> {
         return new Promise(resolve => {
             resolve(JsonDb.updatePokemon(pokemon));
@@ -31,5 +37,12 @@ export default class PokemonDbService {
         return new Promise(resolve => {
             resolve(JsonDb.deletePokemon(pokemon));
         });
+    }
+
+    static searchPokemon(term: string): Promise<PokemonDb[]> {
+        return new Promise(resolve => {
+                resolve(JsonDb.searchPokemonByName(term));
+            }
+        );
     }
 }

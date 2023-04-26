@@ -15,9 +15,7 @@ export default class AuthenticationService {
             iv: CryptoJS.enc.Utf8.parse(iv),
             mode: CryptoJS.mode.CBC
         }).toString();
-        console.log(USERS);
         const isAuthenticate = USERS.some(user => user.username === username && user.password === cryptedPassword);
-        console.log('pswd = ' + password + ' crypt = ' + cryptedPassword);
         return new Promise(resolve => {
             setTimeout(() => {
                 this.isAuthenticate = isAuthenticate;
