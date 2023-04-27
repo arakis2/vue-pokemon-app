@@ -1,9 +1,9 @@
 export default class PokemonDb {
 
     id: number|undefined
+    name: string;
     hp: number;
     cp: number;
-    name: string;
     picture: string;
     created?: Date;
      

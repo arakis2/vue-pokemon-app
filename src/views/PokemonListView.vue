@@ -12,7 +12,7 @@ export default {
         PokemonSearch
     },
    mounted() { 
-        PokemonService.getPokemons().then(pokemons => {
+        PokemonService.getPokemons().then(pokemons => {          
             this.pokemons = pokemons
             this.searchPokemons = pokemons;
         });     

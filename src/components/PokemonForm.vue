@@ -65,9 +65,9 @@ export default {
 
                 if (validForm.isValid) {
                     this.pokemon.picture = this.form?.picture.value;
-                    this.pokemon.name = this.form?.name.value;
-                    this.pokemon.hp = this.form?.hp.value;
-                    this.pokemon.cp = this.form?.cp.value;
+                    this.pokemon.name = toPascalCase(this.form?.name.value);
+                    this.pokemon.hp = +this.form?.hp.value;
+                    this.pokemon.cp = +this.form?.cp.value;
                     this.pokemon.types = this.form?.types.value;
 
                     this.isEditForm ? this.updatePokemon() : this.addPokemon();
@@ -110,6 +110,7 @@ import type PokemonForm from '@/tools/pokemon-form-property';
 import Types from '@/tools/pokemon-types';
 import isTypesValid from '@/validation/pokemon-type-validation'
 import formatType from '@/tools/format-type'
+import { toPascalCase } from '@/tools/format-string';
 </script>
 
 <template>

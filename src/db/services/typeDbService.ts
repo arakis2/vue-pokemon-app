@@ -33,7 +33,7 @@ export default class TypeDbService extends DbService {
         if(!this.isLocal){
             return fetch(`${this.baseUrl}/types?q=${name}`)
             .then(response => response.json())
-            .then(data => this.isEmpty(data) ? null : data)
+            .then(data => this.isEmpty(data) ? null : data[0])
             .catch(error => this.handleError(error));
         } else {
             return new Promise(resolve => {

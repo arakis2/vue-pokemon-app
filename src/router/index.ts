@@ -48,7 +48,7 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach((to) => {
   if (!AuthenticationService.isAuthenticate && (to.name !== 'login' && to.name !== 'pageNotFound')) {
     return {name: 'login'};
   }

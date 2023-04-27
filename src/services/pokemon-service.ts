@@ -12,11 +12,11 @@ export default class PokemonService {
     static pokemons: Pokemon[] = POKEMONS
 
     static getPokemons(): Promise<Pokemon[]> {
-        return new Promise(resolve => {               
+        return new Promise(resolve => {           
                 PokemonDbService.getPokemons().then(pokemonsDb => {
                     this.loadPokemons(pokemonsDb).then(pokemonList => {
-                        resolve(pokemonList);
-                    });                                      
+                        resolve(pokemonList);                      
+                    });                                                         
                 });
         })      
     }
@@ -35,73 +35,92 @@ export default class PokemonService {
     static async updatePokemon(pokemon: Pokemon): Promise<Pokemon> {
         return await new Promise(resolve => {
             const pokemonDb = PokemonConverter.toPokemonDb(pokemon);
-            try {
                 PokemonDbService.updatePokemon(pokemonDb).then(() => {
                     PokemonTypeDbService.getPokemonTypesByPokemonId(pokemon.id).then(dbtypes => {
+                        
                         const pokemonTypes = dbtypes.map(l => l.typeid).filter(n => n !== undefined && n > 0);
+                        
                         this.getTypesDbByTypeName(pokemon.types).then(typesDb => {
-                                const types = typesDb.map(t => t.id);
-                                    console.log(types.toString());
-                                    console.log(pokemonTypes.toString());
-                                if (types.toString() !== pokemonTypes.toString()){
-        
-                                    if (pokemonTypes.length > types.length) {
-                                        //supression
-                                        pokemonTypes.forEach(i => {
-                                            if (!types.includes(i)) {
-                                                const item = dbtypes.find(item => item.typeid === i);
-                                                if (item){
-                                                    PokemonTypeDbService.deletePokemonType(item);
-                                                }
-                                                
-                                            }
-                                        });
-                                    } else {
-                                        console.log('dans ajout')
-                                        // Ajout
-                                        types.forEach(i => {
-                                            if (i  && i > 0 && !pokemonTypes.includes(i)) {
-                                                const type = new PokemontypeDb(undefined, pokemon.id, i);
-                                                PokemonTypeDbService.addPokemonType(type);
-                                            }
-                                        })
-                                    }
+                            const types: number[] = [];
+                            typesDb.forEach(item => {
+                                if(item.id !== undefined && item.id > 0){
+                                    
+                                    types.push(item.id);
                                 }
-                            }
-                            
-                        )
-                    })
-        
-                    PokemonDbService.getPokemonById(pokemon.id).then(pokemondb => {
-                        if(pokemondb) {
-                            const pokemon = this.loadPokemon(pokemondb);
-                            resolve(pokemon);
-                        }                
-                    })
-                }); 
-            } catch (error) {
-                console.log(error);
-            }
+                            })
+
+                                if(types && types.length > 0){
+                                    if (types.toString() !== pokemonTypes.toString()){
             
-        });
-   
+                                        if (pokemonTypes.length > types.length) {
+                                            //supression
+                                            pokemonTypes.forEach(i => {
+                                                if (!types.includes(i)) {
+                                                    const item = dbtypes.find(item => item.typeid === i);
+                                                    if (item){
+                                                        PokemonTypeDbService.deletePokemonType(item).then(() => {
+                                                            this.getPokemon(pokemon.id).then(pokemon => {
+                                                                if(pokemon){
+                                                                    resolve(pokemon);
+                                                                }                                                                  
+                                                            })
+                                                        });
+                                                    }
+                                                    
+                                                }
+                                            });
+                                        } else {
+                                            // Ajout
+                                            types.forEach(i => {
+                                                if (i  && i > 0 && !pokemonTypes.includes(i)) {
+                                                    const type = new PokemontypeDb(undefined, pokemon.id, i);
+                                                    
+                                                    PokemonTypeDbService.addPokemonType(type).then(() => {
+                                                        this.getPokemon(pokemon.id).then(pokemon => {
+                                                            if(pokemon){
+                                                                resolve(pokemon);
+                                                            }                                                                  
+                                                        })
+                                                    });
+                                                }
+                                            })
+                                        }                                        
+                                    }
+
+                                    this.getPokemon(pokemon.id).then(pokemon => {
+                                        if(pokemon){
+                                            resolve(pokemon);
+                                        }                                                                  
+                                    })
+                                }   
+                            }   
+                        )   
+                    })                   
+                });          
+        });  
     }
 
     static deletePokemon(pokemon: Pokemon): Promise<{}> {
         return new Promise(resolve => {    
             PokemonTypeDbService.getPokemonTypesByPokemonId(pokemon.id).then(types => {
                 types.forEach(type => {
-                    PokemonTypeDbService.deletePokemonType(type);
+                    PokemonTypeDbService.deletePokemonType(type).then(() => {
+                        if(types.indexOf(type) === types.length - 1) {
+                            const pokemonDb = PokemonConverter.toPokemonDb(pokemon);
+                            PokemonDbService.deletePokemon(pokemonDb).then(() => {
+                                resolve({});
+                            });            
+                        }
+                    });
                 });
 
-            const pokemonDb = PokemonConverter.toPokemonDb(pokemon);
-            PokemonDbService.deletePokemon(pokemonDb);
-            resolve({});
+            
             });            
           }); 
     }
 
     static addPokemon(pokemon: Pokemon): Promise<Pokemon> {
+        delete pokemon.created
         return new Promise(resolve => {    
             const pokemonDb = PokemonConverter.toPokemonDb(pokemon);
             PokemonDbService.createPokemon(pokemonDb).then(pokemonDb => {
@@ -109,10 +128,16 @@ export default class PokemonService {
                     this.getTypesDbByTypeName(pokemon.types).then(types => {
                         types.forEach(type => {
                             const pokemontype = new PokemontypeDb(undefined, pokemonDb?.id, type.id);
-                            PokemonTypeDbService.addPokemonType(pokemontype);
-                        });
-                        const newPokemon = this.loadPokemon(pokemonDb);
-                        resolve(newPokemon);
+                            PokemonTypeDbService.addPokemonType(pokemontype).then(() => {
+                                if(types.indexOf(type) === types.length - 1) {
+                                    this.loadPokemon(pokemonDb).then(newPokemon => {
+                                        if(newPokemon) {
+                                            resolve(newPokemon);
+                                        }                                       
+                                    });                                   
+                                }
+                            });
+                        });                  
                     });
                 }              
             });
@@ -126,10 +151,14 @@ export default class PokemonService {
                 pokemonsDb.forEach(pokemonDb => {
                     this.loadPokemon(pokemonDb).then(pokemon => {
                         pokemons.push(pokemon);
-                        }
-                    );                    
+                        } 
+                    );
+                    
+                    if(pokemonsDb.indexOf(pokemonDb) === pokemonsDb.length - 1){
+                        resolve(pokemons);
+                    }
                 })
-                resolve(pokemons);
+                
             });
         })
     }
@@ -141,7 +170,7 @@ export default class PokemonService {
                 this.loadPokemon(pokemonDb).then(pokemon => {
                     pokemons.push(pokemon);
 
-                    if(pokemons.length === pokemonsDb.length){
+                    if(pokemonsDb.length === pokemons.length){
                         resolve(pokemons);
                     }
                 })
@@ -158,9 +187,9 @@ export default class PokemonService {
             const pokemon = PokemonConverter.toPokemon(pokemonDb);         
             pokemon.types = [];
             typesDb.forEach(type => {           
-                TypeDbService.getTypeById(type.typeid ?? 0).then(typename => {
-                    if(typename){                                   
-                        pokemon.types.push(typename.name);
+                TypeDbService.getTypeById(type.typeid ?? 0).then(typeDb => {
+                    if(typeDb){                                   
+                        pokemon.types.push(typeDb.name);
                         pokemon.types = pokemon.types.sort();
                     }
                     
@@ -178,13 +207,23 @@ export default class PokemonService {
         return new Promise(resolve => {
             const typesDb: TypeDb[] = [];
             types.forEach(type => {
-                TypeDbService.getTypeByName(type).then(type => {
-                        if(type) {
-                            typesDb.push(type)
-                        }               
-                    });
-            })
-            resolve(typesDb);
+               this.getTypeDbByName(type).then(typeDb => {
+                if(typeDb) {
+                    typesDb.push(typeDb);
+                }
+                if(types.indexOf(type) === types.length - 1){
+                    resolve(typesDb);
+                   }               
+               })             
+            })                      
         })
-    } 
+    }
+    
+    private static getTypeDbByName(name: string): Promise<TypeDb|undefined> {
+        return new Promise(resolve => {
+            TypeDbService.getTypeByName(name).then(typeBb => {
+                resolve(typeBb);
+            });
+        });
+    }
 }
