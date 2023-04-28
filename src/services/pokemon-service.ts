@@ -1,4 +1,3 @@
-import POKEMONS from "@/models/mock-pokemon";
 import type Pokemon from "@/models/pokemon";
 import PokemonDbService from "@/db/services/pokemonDbService";
 import PokemonTypeDbService from "@/db/services/pokemonTypeDbService";
@@ -9,7 +8,6 @@ import PokemontypeDb from "@/db/models/pokemonTypeDb";
 import type TypeDb from "@/db/models/typeDb";
 
 export default class PokemonService {
-    static pokemons: Pokemon[] = POKEMONS
 
     static getPokemons(): Promise<Pokemon[]> {
         return new Promise(resolve => {           
@@ -152,8 +150,7 @@ export default class PokemonService {
                     this.loadPokemon(pokemonDb).then(pokemon => {
                         pokemons.push(pokemon);
                         } 
-                    );
-                    
+                    );                   
                     if(pokemonsDb.indexOf(pokemonDb) === pokemonsDb.length - 1){
                         resolve(pokemons);
                     }
@@ -162,6 +159,72 @@ export default class PokemonService {
             });
         })
     }
+
+    static getImageUrls(): Promise<string[]>{
+        return new Promise(resolve => {
+            let max = 0;
+            this.getMaxCount().then(maxCount => {
+                max = maxCount;
+                const urls: string[] = [];
+                for (let i = 1; i <= max; i++) {
+                    urls.push(this.getUrl(i));
+                }
+                resolve(urls);
+            });
+           
+        });
+    }
+
+    static getUrl(nb: number): string {
+        const tmpUrl = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/XXX.png';
+        let formatNumber = nb.toString();
+        if(nb.toString().length < 3){
+            formatNumber = (`000${nb}`).slice(-3);
+        }
+        
+        return tmpUrl.replace('XXX', formatNumber);
+    }
+
+    private static getMaxCount(): Promise<number> {
+        return new Promise(resolve => {
+            let i = 1050;
+            let exists = false;
+            while(!exists) {
+                const img = this.getUrl(i);
+                try {
+                    exists = this.isImageExists(img);
+                } finally {
+                    if(exists) {
+                        resolve(i);
+                    }
+    
+                    i--;
+                }
+            }
+        });
+    }
+
+
+
+    private static isImageExists(url: string): boolean {
+            const img = new Image();
+                img.src = url;
+
+                if(img.complete) {
+                    return true;
+                }
+
+                img.onload = () => {
+                    return true;
+                }
+
+                img.onerror = () => {
+                    return false;
+                }
+            
+            return false;
+            
+        }
 
     private static loadPokemons(pokemonsDb: PokemonDb[]): Promise<Pokemon[]> {
         return new Promise(resolve => {

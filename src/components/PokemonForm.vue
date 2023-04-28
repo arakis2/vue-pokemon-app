@@ -57,7 +57,7 @@ export default {
 
             this.setform({ ...this.form, ...{ types: newField } } as Pokemonform);
         },
-        handleSubmit(e: any) {            
+        handleSubmit(e: any) {
             e.preventDefault();
             let newForm: Pokemonform = this.form as Pokemonform;
             validateForm(newForm, true).then(validForm => {
@@ -73,7 +73,7 @@ export default {
                     this.isEditForm ? this.updatePokemon() : this.addPokemon();
                 }
             });
-            
+
 
         },
         setform(form: Pokemonform) {
@@ -82,7 +82,7 @@ export default {
         deletePokemon() {
             PokemonService.deletePokemon(this.pokemon).then(() => this.$router.push('/pokemons'))
         },
-        isTypeValid(form: Pokemonform, type: string): boolean{
+        isTypeValid(form: Pokemonform, type: string): boolean {
             return isTypesValid(form, type);
         },
         addPokemon() {
@@ -90,6 +90,10 @@ export default {
         },
         updatePokemon() {
             PokemonService.updatePokemon(this.pokemon).then(() => this.$router.push(`/pokemons/${this.pokemon.id}`))
+        },
+        searchPokemonImage() {
+            console.log('dans search');
+            this.$router.push('/pokemons/images')
         }
     },
     mounted() {
@@ -129,12 +133,18 @@ import { toPascalCase } from '@/tools/format-string';
                             <!-- Pokemon picture -->
                             <div v-if="!isEditForm" className="form-group">
                                 <label htmlFor="picture">Image</label>
-                                <input id="picture" type="text" name="picture" className="form-control"
-                                    :value="form?.picture.value" @change="handleInputChange">
-                                <!-- Error -->
-                                <div v-if="form?.picture.error" className="card-panel red accent-1">
-                                    {{ form.picture.error }}
+                                <div className="card-image">
+                                    <input id="picture" type="text" name="picture" className="form-control"
+                                        :value="form?.picture.value" @change="handleInputChange">
+                                    <span className="btn-floating halfway-fab waves-effect waves-light">
+                                        <i @click="searchPokemonImage" className="material-icons">search</i>
+                                    </span>
+                                    <!-- Error -->
+                                    <div v-if="form?.picture.error" className="card-panel red accent-1">
+                                        {{ form.picture.error }}
+                                    </div>
                                 </div>
+
                             </div>
                             <!-- Pokemon name -->
                             <div className="form-group">
@@ -171,7 +181,9 @@ import { toPascalCase } from '@/tools/format-string';
                                 <label htmlFor="types">Types</label>
                                 <div v-for="type in types" :key="types.indexOf(type)" style="margin-bottom: 10px;">
                                     <label>
-                                        <input id={type} type="checkbox" className="filled-in" :checked="hasType(type)" :disabled="!isTypeValid(form as Pokemonform, type)" @change="$Event => selectType(type, $Event)">
+                                        <input id={type} type="checkbox" className="filled-in" :checked="hasType(type)"
+                                            :disabled="!isTypeValid(form as Pokemonform, type)"
+                                            @change="$Event => selectType(type, $Event)">
                                         <span>
                                             <p :className="formatType(type)">{{ type }}</p>
                                         </span>
@@ -182,7 +194,7 @@ import { toPascalCase } from '@/tools/format-string';
                         <div className="card-action center">
                             <!-- Submit button -->
                             <button type="submit" className="btn">Valider</button>
-                        </div>                       
+                        </div>
                     </div>
                 </div>
             </div>
