@@ -19,8 +19,9 @@ export default {
             validateForm: validateForm,
             types: [] as string[],
             isTypesValid: isTypesValid,
-            formatType: formatType
-        }
+            formatType: formatType,
+            urls: [] as string[]
+        };
     },
     methods: {
         hasType(type: string): boolean {
@@ -34,6 +35,10 @@ export default {
                 cp: { value: this.pokemon.cp, isValid: true },
                 types: { value: this.pokemon.types, isValid: true }
             } as Pokemonform);
+
+            PokemonService.getImageUrls().then(imgs => {
+                this.urls = imgs;                
+            });  
         },
         handleInputChange(e: any): void {
             const fieldName: string = e.target.name;
@@ -44,61 +49,65 @@ export default {
         selectType(type: string, e: any): void {
             const checked = e.target.checked;
             let newField: PokemonField;
-
             if (checked) {
                 // Si l'utilisateur coche un type, à l'ajoute à la liste des types du pokémon.
                 const newTypes: string[] = this.form?.types.value.concat([type]);
                 newField = { value: newTypes };
-            } else {
+            }
+            else {
                 // Si l'utilisateur décoche un type, on le retire de la liste des types du pokémon.
                 const newTypes: string[] = this.form?.types.value.filter((currentType: string) => currentType !== type);
                 newField = { value: newTypes };
             }
-
             this.setform({ ...this.form, ...{ types: newField } } as Pokemonform);
         },
         handleSubmit(e: any) {
             e.preventDefault();
             let newForm: Pokemonform = this.form as Pokemonform;
-            validateForm(newForm, true).then(validForm => {
+            validateForm(newForm, this.pokemon.id > 0).then(validForm => {
                 this.setform(validForm.form);
-
+                console.log('valid:' + validForm.isValid);
                 if (validForm.isValid) {
                     this.pokemon.picture = this.form?.picture.value;
                     this.pokemon.name = toPascalCase(this.form?.name.value);
                     this.pokemon.hp = +this.form?.hp.value;
                     this.pokemon.cp = +this.form?.cp.value;
                     this.pokemon.types = this.form?.types.value;
-
                     this.isEditForm ? this.updatePokemon() : this.addPokemon();
                 }
             });
-
-
         },
         setform(form: Pokemonform) {
             this.form = form;
         },
         deletePokemon() {
-            PokemonService.deletePokemon(this.pokemon).then(() => this.$router.push('/pokemons'))
+            PokemonService.deletePokemon(this.pokemon).then(() => this.$router.push("/pokemons"));
         },
         isTypeValid(form: Pokemonform, type: string): boolean {
             return isTypesValid(form, type);
         },
         addPokemon() {
-            PokemonService.addPokemon(this.pokemon).then(() => this.$router.push('/pokemons'))
+            PokemonService.addPokemon(this.pokemon).then(() => this.$router.push("/pokemons"));
         },
         updatePokemon() {
-            PokemonService.updatePokemon(this.pokemon).then(() => this.$router.push(`/pokemons/${this.pokemon.id}`))
+            PokemonService.updatePokemon(this.pokemon).then(() => this.$router.push(`/pokemons/${this.pokemon.id}`));
         },
         searchPokemonImage() {
-            console.log('dans search');
-            this.$router.push('/pokemons/images')
+            this.$router.push("/pokemons/images");
+        },
+        setPictureUrl(url: string): void {
+            if(this.form){
+                this.form.picture.value = url;
+            }
+            
         }
     },
     mounted() {
         this.initform();
         this.types = Types;
+    },
+    components: {
+        PokemonImageCard
     }
 }
 
@@ -115,6 +124,7 @@ import Types from '@/tools/pokemon-types';
 import isTypesValid from '@/validation/pokemon-type-validation'
 import formatType from '@/tools/format-type'
 import { toPascalCase } from '@/tools/format-string';
+import PokemonImageCard from '@/components/PokemonImageCard.vue'
 </script>
 
 <template>
@@ -122,29 +132,35 @@ import { toPascalCase } from '@/tools/format-string';
         <div className="row">
             <div className="col s12 m8 offset-m2">
                 <div className="card hoverable">
-                    <div className="card-image">
-                        <img :src="pokemon.picture" :alt="pokemon.name" style="width: 250px; margin: 0 auto" />
+                    <div v-if="form?.picture.value !== ''" className="card-image">
+                        <img :src="form?.picture.value" :alt="form?.name.value" style="width: 250px; margin: 0 auto" />
                         <span className="btn-floating halfway-fab waves-effect waves-light">
-                            <i @click="deletePokemon" className="material-icons">delete</i>
+                            <i v-if="pokemon.id > 0" @click="deletePokemon" className="material-icons">delete</i>
+                            <i v-else @click="initform()" className="material-icons">refresh</i>
                         </span>
                     </div>
                     <div className="card-stacked">
                         <div className="card-content">
                             <!-- Pokemon picture -->
-                            <div v-if="!isEditForm" className="form-group">
+                            <div v-if="form?.picture.value === ''" className="form-group">
                                 <label htmlFor="picture">Image</label>
                                 <div className="card-image">
-                                    <input id="picture" type="text" name="picture" className="form-control"
-                                        :value="form?.picture.value" @change="handleInputChange">
-                                    <span className="btn-floating halfway-fab waves-effect waves-light">
-                                        <i @click="searchPokemonImage" className="material-icons">search</i>
-                                    </span>
+                                    <div v-if="urls && urls.length > 0">
+                                        <div className="container">
+                                                <div className="row" style="overflow:auto; height: 550px;">
+                                                    <PokemonImageCard v-for="url in urls" :key="urls.indexOf(url)" @click="setPictureUrl(url)"
+                                                        :Url="url" />
+                                                </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- <input id="picture" type="text" name="picture" className="form-control"
+                                        :value="form?.picture.value" @change="handleInputChange"> -->
                                     <!-- Error -->
                                     <div v-if="form?.picture.error" className="card-panel red accent-1">
                                         {{ form.picture.error }}
                                     </div>
                                 </div>
-
                             </div>
                             <!-- Pokemon name -->
                             <div className="form-group">

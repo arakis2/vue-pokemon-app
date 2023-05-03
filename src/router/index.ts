@@ -3,10 +3,9 @@ import PokemonListView from '../views/PokemonListView.vue'
 import PokemonDetailViewVue from '@/views/PokemonDetailView.vue'
 import PageNotFound from '../views/PageNotFound.vue'
 import PokemonEditViewVue from '@/views/PokemonEditView.vue'
-import PokemonAddViewwVue from '@/views/PokemonAddVieww.vue'
+import PokemonAddViewVue from '@/views/PokemonAddView.vue'
 import LoginViewVue from '@/views/LoginView.vue'
 import AuthenticationService from '@/services/authentication-service'
-import PokemonSearchImageViewVue from '@/views/PokemonSearchImageView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,12 +38,7 @@ const router = createRouter({
     {
       path: '/pokemons/add',
       name: 'addPokemon',
-      component: PokemonAddViewwVue
-    },
-    {
-      path: '/pokemons/images',
-      name: 'images',
-      component: PokemonSearchImageViewVue
+      component: PokemonAddViewVue
     },
     {
       path: '/:pathMatch(.*)*',

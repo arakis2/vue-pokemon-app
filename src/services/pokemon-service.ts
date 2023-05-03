@@ -6,8 +6,10 @@ import PokemonConverter from '@/tools/converters/pokemon-converter'
 import type PokemonDb from "@/db/models/pokemonDb";
 import PokemontypeDb from "@/db/models/pokemonTypeDb";
 import type TypeDb from "@/db/models/typeDb";
+import pokemonPictures from '@/pokemon-configuration.json'
 
 export default class PokemonService {
+    static currentPokemon: Pokemon;
 
     static getPokemons(): Promise<Pokemon[]> {
         return new Promise(resolve => {           
@@ -187,20 +189,25 @@ export default class PokemonService {
 
     private static getMaxCount(): Promise<number> {
         return new Promise(resolve => {
-            let i = 1050;
-            let exists = false;
-            while(!exists) {
-                const img = this.getUrl(i);
-                try {
-                    exists = this.isImageExists(img);
-                } finally {
-                    if(exists) {
-                        resolve(i);
+            if(pokemonPictures?.pokemonpictures.autoload){
+                let i = 1050;
+                let exists = false;
+                while(!exists) {
+                    const img = this.getUrl(i);
+                    try {
+                        exists = this.isImageExists(img);
+                    } finally {
+                        if(exists) {
+                            resolve(i);
+                        }
+        
+                        i--;
                     }
-    
-                    i--;
                 }
+            } else {
+                resolve(pokemonPictures?.pokemonpictures?.max ?? 500);
             }
+            
         });
     }
 

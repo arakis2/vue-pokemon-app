@@ -2,5 +2,9 @@
     "source": {
         "local": false,
         "baseurl": "http://localhost:3001"
+    },
+    "pokemonpictures": {
+        "max": 1008,
+        "autoload": false
     }
 }

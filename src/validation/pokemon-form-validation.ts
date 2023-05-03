@@ -22,20 +22,16 @@ const validateForm = (form: Pokemonform, isEditForm: boolean): Promise<Validatio
                 form = { ...form, ...{ name: newField } };
               }
             }
-            
-            if(!isEditForm) {
 
-              const start = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
-              const end = ".png";
-          
-              if(!form.picture.value.startsWith(start) || !form.picture.value.endsWith(end)) {
-                const errorMsg: string = 'L\'url n\'est pas valide.';
-                const newField: PokemonField = { value: form.picture.value, error: errorMsg, isValid: false };
-                form = { ...form, ...{ picture: newField } };
-              } else {
-                const newField: PokemonField = { value: form.picture.value, error: '', isValid: true };
-                form = { ...form, ...{ picture: newField } };
-              }
+            const start = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
+            const end = ".png";
+            if(!form.picture.value || form.picture.value === '' || !form.picture.value.startsWith(start) || !form.picture.value.endsWith(end)) {
+              const errorMsg: string = 'L\'image n\'est pas valide.';
+              const newField: PokemonField = { value: form.picture.value, error: errorMsg, isValid: false };
+              form = { ...form, ...{ picture: newField } };
+            } else {
+              const newField: PokemonField = { value: form.picture.value, error: '', isValid: true };
+              form = { ...form, ...{ picture: newField } };
             }
 
             // Validator hp
@@ -58,7 +54,7 @@ const validateForm = (form: Pokemonform, isEditForm: boolean): Promise<Validatio
               form = { ...form, ...{ cp: newField } };
             }
 
-            resolve(new ValidationForm(form, form.name.isValid && form.hp.isValid && form.cp.isValid));
+            resolve(new ValidationForm(form, form.name.isValid && form.hp.isValid && form.cp.isValid && form.picture.isValid));
           }
         );
       }
