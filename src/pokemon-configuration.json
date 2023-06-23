@@ -1,6 +1,6 @@
 {
     "source": {
-        "local": false,
+        "local": true,
         "baseurl": "http://localhost:3001"
     },
     "pokemonpictures": {
